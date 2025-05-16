@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: backend-app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile # Assuming Dockerfile is in ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - mern-network
+    environment:
+      - DATABASE_URL=mongodb://db:27017/restaurant_reservation
+      - PORT=5000
+
+  frontend:
+    container_name: frontend-app
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile # Assuming Dockerfile is in ./frontend
+    ports:
+      - "3000:80"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    networks:
+      - mern-network
+
+  db:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - /home/ubuntu/db_data:/data/db
+    networks:
+      - mern-network
+
+networks:
+  mern-network:
+    driver: bridge
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
+  frontend_build:
+  db_data:
