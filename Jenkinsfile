@@ -34,13 +34,20 @@ pipeline {
                 echo '🐳 Running Docker Compose on EC2...'
                 sshagent (credentials: ["${env.SSH_KEY_ID}"]) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
 set -e
 cd ${REMOTE_DIR}
 echo "🔻 Stopping old containers..."
-docker compose down --remove-orphans
+docker compose down --remove-orphans || echo "⚠️ Nothing to stop or error occurred"
+
 echo "🚀 Starting new containers..."
-docker compose up -d --build
+docker compose up -d --build || { echo "❌ Docker Compose failed"; exit 1; }
+
+echo "📦 Checking running containers..."
+docker ps
+
+echo "🌐 Checking if frontend is running on port 3000..."
+sudo lsof -i :3000 || echo "⚠️ Port 3000 not in use"
 ENDSSH
                     '''
                 }
@@ -50,7 +57,7 @@ ENDSSH
 
     post {
         success {
-            echo '✅ App deployed successfully on EC2.'
+            echo '✅ App deployed successfully on EC2. Visit http://3.110.219.235:3000'
         }
         failure {
             echo '❌ Deployment failed. Please check the logs above.'
