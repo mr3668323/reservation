@@ -2,13 +2,14 @@ pipeline {
     agent any
 
     environment {
-        REMOTE_USER = 'ubuntu'
-        REMOTE_HOST = 'ec2-3-110-219-235.ap-south-1.compute.amazonaws.com'
-        REMOTE_DIR  = '/home/ubuntu/restaurant1'
-        SSH_KEY_ID  = '24ae6725-79f4-46a0-a300-72aec761e5c8'
-        GIT_REPO    = 'https://github.com/mr3668323/reservation.git'
-        BRANCH      = 'main'
-    }
+    REMOTE_USER = 'ubuntu'
+    REMOTE_HOST = 'ec2-3-110-219-235.ap-south-1.compute.amazonaws.com'
+    REMOTE_DIR  = '/home/ubuntu/restaurant1'
+    SSH_KEY_ID  = '24ae6725-79f4-46a0-a300-72aec761e5c8'
+    GIT_REPO    = 'https://github.com/mr3668323/reservation.git'
+    BRANCH      = 'main'
+}
+
 
     stages {
         stage('Pull latest code') {
