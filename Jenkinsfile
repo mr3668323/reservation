@@ -33,16 +33,16 @@ pipeline {
             steps {
                 echo '🐳 Running Docker Compose on EC2...'
                 sshagent (credentials: ["${env.SSH_KEY_ID}"]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
-                            set -e
-                            cd ${REMOTE_DIR}
-                            echo "🔻 Stopping old containers..."
-                            docker compose down --remove-orphans
-                            echo "🚀 Starting new containers..."
-                            docker compose up -d --build
-                        ENDSSH
-                    """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+set -e
+cd ${REMOTE_DIR}
+echo "🔻 Stopping old containers..."
+docker compose down --remove-orphans
+echo "🚀 Starting new containers..."
+docker compose up -d --build
+ENDSSH
+                    '''
                 }
             }
         }
